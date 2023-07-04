@@ -75,14 +75,9 @@ def symax_init2(isX5, rx_tx_addr):
 
 
 class Syma(threading.Thread):
-    def __init__(self, address):
-        self.rx_tx_addr = [0] * ADDRESS_LEN
-        self.address = int(address, 16)
-        self.pipes = [0xAFAEADACAB, self.address]
-        for i in range(ADDRESS_LEN):
-            self.rx_tx_addr[ADDRESS_LEN - 1 - i] = ord(
-                chr(int(address[2 * i : 2 * i + 2], 16))
-            )
+    def __init__(self):
+        self.rx_tx_addr=bytes([161, 105, 1, 104, 204])
+        self.pipes = [self.rx_tx_addr, self.rx_tx_addr]
         self.chans = symax_init2(0, self.rx_tx_addr)
         self.ch = 0
         self.chans_count = len(self.chans)
@@ -102,7 +97,7 @@ class Syma(threading.Thread):
 
         try:
             self.radio = RF24(
-                RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_24, BCM2835_SPI_SPEED_8MHZ
+                25,0
             )
             self.setup()
             pass
@@ -254,8 +249,10 @@ class App(threading.Thread):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
+    """    if len(sys.argv) > 1:
         app = App(address=sys.argv[1])
     else:
         app = App(address="a20009890f")
-    app.start()
+    app.start()"""
+    syma=Syma()
+    syma.run()
